@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTemplatesList();
   });
 
+  // Listen to tab updates (page SPA navigations) to reload templates
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === "complete") {
       renderTemplatesList();
@@ -297,6 +298,9 @@ function renderTemplatesList() {
         templates = DEFAULT_TEMPLATES.map(t => ({ ...t, id: Date.now() + Math.random() }));
         chrome.storage.local.set({ [storageKey]: templates });
       }
+
+      // Sort templates alphabetically by name (handles Emojis and Vietnamese accents naturally)
+      templates.sort((a, b) => a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }));
 
       // Clean container
       listContainer.innerHTML = "";
