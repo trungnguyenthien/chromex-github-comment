@@ -173,6 +173,11 @@ function initCommentTemplates() {
   const toggleBtn = document.getElementById("btn-toggle-form");
   const cancelBtn = document.getElementById("btn-cancel-template");
 
+  // Import / Export button elements
+  const exportBtn = document.getElementById("btn-export-templates");
+  const importBtn = document.getElementById("btn-import-templates");
+  const fileInput = document.getElementById("file-import-input");
+
   // Setup click toggles
   toggleBtn.addEventListener("click", () => toggleForm());
   cancelBtn.addEventListener("click", () => toggleForm(false));
@@ -258,7 +263,119 @@ function initCommentTemplates() {
     });
   });
 
-  // 3. Initial rendering of saved list
+  // 3. EXPORT SCOPED REPOSITORY JSON TEMPLATES
+  exportBtn.addEventListener("click", () => {
+    getCurrentRepo((repo) => {
+      if (!repo) return;
+      const storageKey = `templates_repo_${repo}`;
+      
+      chrome.storage.local.get(storageKey, (result) => {
+        const templates = result[storageKey] || [];
+        if (templates.length === 0) {
+          showToast("Không có mẫu nhận xét nào để xuất!", "warning");
+          return;
+        }
+
+        try {
+          const jsonString = JSON.stringify(templates, null, 2);
+          const blob = new Blob([jsonString], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          
+          const a = document.createElement("a");
+          a.href = url;
+          // Format filename: pr_templates_owner_repo.json (e.g. pr_templates_trungnguyen_ios_vietquiz.json)
+          const cleanRepoName = repo.replace(/[^a-zA-Z0-9]/g, "_");
+          a.download = `pr_templates_${cleanRepoName}.json`;
+          document.body.appendChild(a);
+          a.click();
+          
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }, 100);
+
+          showToast("Xuất file JSON thành công! 📤", "success");
+        } catch (err) {
+          console.error("Export failed:", err);
+          showToast("Lỗi khi xuất file mẫu nhận xét!", "error");
+        }
+      });
+    });
+  });
+
+  // 4. IMPORT SCOPED REPOSITORY JSON TEMPLATES
+  importBtn.addEventListener("click", () => {
+    fileInput.click(); // Trigger native file dialog
+  });
+
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    getCurrentRepo((repo) => {
+      if (!repo) return;
+      const storageKey = `templates_repo_${repo}`;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          
+          if (!Array.isArray(importedData)) {
+            showToast("Lỗi: Dữ liệu JSON phải là dạng danh sách (Array)!", "error");
+            return;
+          }
+
+          // Filter and Sanitize inputs
+          const sanitized = importedData.map(item => ({
+            id: item.id || Date.now() + Math.random(),
+            name: String(item.name || "Mẫu chưa đặt tên").trim(),
+            description: String(item.description || "").trim(),
+            color: String(item.color || "#10b981").trim()
+          })).filter(item => item.name && item.description);
+
+          if (sanitized.length === 0) {
+            showToast("Lỗi: Không tìm thấy mẫu nhận xét hợp lệ trong file!", "warning");
+            return;
+          }
+
+          chrome.storage.local.get(storageKey, (result) => {
+            const currentTemplates = result[storageKey] || [];
+            const merged = [...currentTemplates];
+            let updateCount = 0;
+            let addCount = 0;
+
+            // Merge details: Update if name exists (case-insensitive), otherwise append
+            sanitized.forEach(importedItem => {
+              const existsIdx = merged.findIndex(t => t.name.toLowerCase() === importedItem.name.toLowerCase());
+              if (existsIdx >= 0) {
+                merged[existsIdx] = importedItem; // Replace/update existing
+                updateCount++;
+              } else {
+                merged.push(importedItem); // Append new
+                addCount++;
+              }
+            });
+
+            chrome.storage.local.set({ [storageKey]: merged }, () => {
+              showToast(`Nhập mẫu thành công! (Thêm: ${addCount}, Cập nhật: ${updateCount}) 📥`, "success");
+              renderTemplatesList();
+            });
+          });
+        } catch (err) {
+          console.error("Import parsing failed:", err);
+          showToast("Lỗi: File JSON không đúng cấu trúc mẫu nhận xét!", "error");
+        } finally {
+          // Clear input buffer
+          fileInput.value = "";
+        }
+      };
+
+      reader.readAsText(file);
+    });
+  });
+
+  // 5. Initial rendering of saved list
   renderTemplatesList();
 }
 
@@ -267,12 +384,15 @@ function renderTemplatesList() {
   const listContainer = document.getElementById("templates-list");
   const toggleBtn = document.getElementById("btn-toggle-form");
   const headerTitle = document.getElementById("list-header-title");
+  const actionsBar = document.getElementById("repo-actions-bar");
 
   getCurrentRepo((repo) => {
     // A. Out of scope scenario: User is not active on a GitHub repository
     if (!repo) {
       // Hide entry toggler
       toggleBtn.style.display = "none";
+      // Hide scoped Actions bar
+      actionsBar.style.display = "none";
       // Reset header
       headerTitle.textContent = "Mẫu Nhận Xét";
       // Display visual placeholder
@@ -286,6 +406,7 @@ function renderTemplatesList() {
 
     // B. Active repository scenario: Scoped templates listing
     toggleBtn.style.display = "flex"; // Show entry toggler
+    actionsBar.style.display = "flex"; // Show Scoped Actions bar
     headerTitle.textContent = `Mẫu nhận xét của repo: ${repo}`; // Set scoping title
 
     const storageKey = `templates_repo_${repo}`;

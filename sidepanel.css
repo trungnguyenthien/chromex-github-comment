@@ -843,5 +843,43 @@ body {
   transform: scale(1.1);
 }
 
+/* Repository Import/Export Scoped Actions Bar */
+.repo-actions-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-top: 4px;
+}
+
+.btn-action-small {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition-smooth);
+}
+
+.btn-action-small:hover {
+  background: var(--bg-secondary);
+  color: var(--accent-purple);
+  border-color: var(--accent-purple);
+  transform: translateY(-0.5px);
+}
+
+.btn-action-small:active {
+  transform: translateY(0);
+}
+
+
 
 
