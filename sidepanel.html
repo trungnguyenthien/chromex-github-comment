@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub PR Assistant</title>
+  <!-- Google Fonts for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sidepanel-container">
+    <!-- Content Area (Header removed for clean, focused layout) -->
+    <main class="sidepanel-main">
+      <!-- FEATURE 1: COMMENT TEMPLATE MANAGER (Primary Feature) -->
+      <section class="templates-section glass-panel animate-slide-up">
+        <div class="section-title-bar">
+          <span class="section-icon">📝</span>
+          <h2>Comment Templates</h2>
+        </div>
+
+        <!-- Toggle Add Form Button (Dashed Premium Toggle) -->
+        <button id="btn-toggle-form" class="btn-toggle">
+          <span class="toggle-icon">+</span>
+          <span>Thêm Mẫu Nhận Xét</span>
+        </button>
+
+        <!-- Collapsible Add Form Container (Hidden by Default) -->
+        <div id="template-form-container" class="form-container">
+          <div class="form-group">
+            <label for="template-name">Tên mẫu nhận xét <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <input type="text" id="template-name" placeholder="Ví dụ: LGTM, Bug Logic, Convention...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="template-desc">Nội dung nhận xét <span class="required">*</span></label>
+            <textarea id="template-desc" placeholder="Nội dung sẽ tự động chèn vào PR Comment textarea..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Màu sắc nhận diện <span class="required">*</span></label>
+            <div class="color-picker-grid">
+              <button class="color-btn active" data-color="#10b981" style="background-color: #10b981;" title="Emerald Green"></button>
+              <button class="color-btn" data-color="#4f46e5" style="background-color: #4f46e5;" title="Electric Indigo"></button>
+              <button class="color-btn" data-color="#8b5cf6" style="background-color: #8b5cf6;" title="Vibrant Purple"></button>
+              <button class="color-btn" data-color="#2563eb" style="background-color: #2563eb;" title="Royal Blue"></button>
+              <button class="color-btn" data-color="#db2777" style="background-color: #db2777;" title="Neon Pink"></button>
+              <button class="color-btn" data-color="#f97316" style="background-color: #f97316;" title="Warm Orange"></button>
+              <button class="color-btn" data-color="#d97706" style="background-color: #d97706;" title="Cyber Amber"></button>
+              <button class="color-btn" data-color="#dc2626" style="background-color: #dc2626;" title="Crimson Red"></button>
+              <button class="color-btn" data-color="#fda4af" style="background-color: #fda4af;" title="Sunset Peach"></button>
+              <button class="color-btn" data-color="#0d9488" style="background-color: #0d9488;" title="Mint Teal"></button>
+              <button class="color-btn" data-color="#0ea5e9" style="background-color: #0ea5e9;" title="Sky Blue"></button>
+              <button class="color-btn" data-color="#475569" style="background-color: #475569;" title="Deep Slate"></button>
+            </div>
+          </div>
+
+          <!-- Action buttons inside form -->
+          <div class="form-actions">
+            <button id="btn-save-template" class="btn-primary">
+              <span>Lưu Mẫu Nhận Xét</span>
+              <span class="btn-sparkle">✨</span>
+            </button>
+            <button id="btn-cancel-template" class="btn-secondary">Hủy</button>
+          </div>
+        </div>
+
+        <!-- List Header -->
+        <div class="list-header-bar">
+          <h3 id="list-header-title">Danh sách mẫu nhận xét</h3>
+          <span class="info-tip" title="Bấm vào mẫu để chèn nội dung vào textarea trên GitHub">💡 Click để chèn nhanh</span>
+        </div>
+
+        <!-- List Container -->
+        <div id="templates-list" class="templates-list-container">
+          <!-- Will be loaded dynamically from storage -->
+          <div class="empty-list-state">Đang tải danh sách mẫu...</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="sidepanel-footer">
+      <p>Bản quyền © 2026 PR Assistant. Thiết kế cao cấp ✨</p>
+    </footer>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
