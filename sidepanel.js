@@ -383,7 +383,6 @@ function initCommentTemplates() {
 function renderTemplatesList() {
   const listContainer = document.getElementById("templates-list");
   const toggleBtn = document.getElementById("btn-toggle-form");
-  const headerTitle = document.getElementById("list-header-title");
   const actionsBar = document.getElementById("repo-actions-bar");
 
   getCurrentRepo((repo) => {
@@ -393,8 +392,6 @@ function renderTemplatesList() {
       toggleBtn.style.display = "none";
       // Hide scoped Actions bar
       actionsBar.style.display = "none";
-      // Reset header
-      headerTitle.textContent = "Mẫu Nhận Xét";
       // Display visual placeholder
       listContainer.innerHTML = `
         <div class="empty-list-state" style="border-style: solid; background: rgba(226, 232, 240, 0.2);">
@@ -407,7 +404,6 @@ function renderTemplatesList() {
     // B. Active repository scenario: Scoped templates listing
     toggleBtn.style.display = "flex"; // Show entry toggler
     actionsBar.style.display = "flex"; // Show Scoped Actions bar
-    headerTitle.textContent = `Mẫu nhận xét của repo: ${repo}`; // Set scoping title
 
     const storageKey = `templates_repo_${repo}`;
 

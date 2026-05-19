@@ -69,19 +69,15 @@
           </div>
         </div>
 
-        <!-- List Header -->
-        <div class="list-header-bar">
-          <h3 id="list-header-title">Danh sách mẫu nhận xét</h3>
-          <span class="info-tip" title="Bấm vào mẫu để chèn nội dung vào textarea trên GitHub">💡 Click để chèn nhanh</span>
-        </div>
-
         <!-- Scoped Repo Import/Export Actions Bar -->
         <div id="repo-actions-bar" class="repo-actions-bar" style="display: none;">
-          <button id="btn-export-templates" class="btn-action-small" title="Xuất danh sách mẫu của repo này thành file JSON">
-            <span>📤 Xuất JSON (Export)</span>
-          </button>
           <button id="btn-import-templates" class="btn-action-small" title="Nhập danh sách mẫu từ file JSON vào repo này">
-            <span>📥 Nhập JSON (Import)</span>
+            <img src="icons/import.png" class="btn-action-icon" alt="Import" />
+            <span>Import</span>
+          </button>
+          <button id="btn-export-templates" class="btn-action-small" title="Xuất danh sách mẫu của repo này thành file JSON">
+            <img src="icons/export.png" class="btn-action-icon" alt="Export" />
+            <span>Export</span>
           </button>
           <input type="file" id="file-import-input" accept=".json" style="display: none;" />
         </div>
